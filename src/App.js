@@ -1,6 +1,8 @@
 import './App.css';
 import React from "react";
 import CanvasDraw from "react-canvas-draw";
+import axios from "axios";
+
 
 
 function App() {
@@ -30,12 +32,18 @@ function App() {
 
   const handleUp = (_) => {
     console.log(coordsList)
+    //make api request
+    axios
+      .post("http://localhost:8000/playlist/json/", {"list": coordsList})
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+
     setCollecting(false);
   }
 
   const handleMove = (event) => {
     //if (collecting) console.log('beep')
-    if(collecting) coordsList.push({ x: event.offsetX, y: event.offsetY });
+    if(collecting) coordsList.push({ x: event.offsetX, y: 400 - event.offsetY });
   }
 
   return (
