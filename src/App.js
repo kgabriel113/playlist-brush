@@ -34,7 +34,7 @@ function App() {
     console.log(coordsList)
     //make api request
     axios
-      .post("http://localhost:8000/playlist/json/", {"list": coordsList})
+      .post("https://conductor-brush-api.herokuapp.com/playlist/json/", {"list": coordsList})
       .then(res => console.log(res))
       .catch(err => console.log(err));
 
