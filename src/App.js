@@ -71,7 +71,7 @@ function App() {
     if(storedLine.length < 1) alert("no data to post!")
     else {
       axios
-        .post("http://localhost:8000/playlist/generate/", {"list": storedLine}) //https://conductor-brush-api.herokuapp.com
+        .post("https://conductor-brush-api.herokuapp.com/playlist/generate/", {"list": storedLine}) //https://conductor-brush-api.herokuapp.com //http://localhost:8000/playlist/generate/
         .then(res => {
           console.log(res.data.playlist);
           setResults(res.data.playlist);
