@@ -68,7 +68,7 @@ function App() {
     if(storedLine.length < 1) alert("no data to post!")
     else {
       axios
-        .post("https://conductor-brush-api.herokuapp.com/playlist/generate/", {"list": coordsList})
+        .post("https://conductor-brush-api.herokuapp.com/playlist/generate/", {"list": storedLine})
         .then(res => console.log(res))
         .catch(err => console.log(err)); 
     }
