@@ -6,12 +6,14 @@ import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
+import ListPanel from './ListPanel';
 
 
 function App() {
   const [collecting, setCollecting] = React.useState(false);
   const [isLinear, setIsLinear] = React.useState(true);
   const [storedLine, setStoredLine] = React.useState([]);
+  const [results, setResults] = React.useState([]);
   var coordsList = [];
 
   const canvasRef = React.useRef();
@@ -62,15 +64,18 @@ function App() {
   const onClearClick = () => {
     canvasRef.current.clear();
     setStoredLine([]);
+    setResults([]);
   }
 
   const onPostClick = () => {
     if(storedLine.length < 1) alert("no data to post!")
     else {
       axios
-        .post("https://conductor-brush-api.herokuapp.com/playlist/generate/", {"list": storedLine})
-        .then(res => console.log(res))
-        .catch(err => console.log(err)); 
+        .post("http://localhost:8000/playlist/generate/", {"list": storedLine}) //https://conductor-brush-api.herokuapp.com
+        .then(res => {
+          console.log(res.data.playlist);
+          setResults(res.data.playlist);
+        }).catch(err => console.log(err)); 
     }
   }
 
@@ -83,16 +88,22 @@ function App() {
     <div className="App">
       <header className="App-header">
           <h1>Draw tempo playlist</h1>
-          <div ref={windowRef} style={{paddingBottom: 15}}>
-            <CanvasDraw ref={canvasRef} />
+          <div style={{display: "flex", flexDirection: "row", overflow: "hidden"}}>
+            <div style={{display: "flex", flexDirection: "column"}}>
+            <div ref={windowRef} style={{paddingBottom: 15}}>
+              <CanvasDraw ref={canvasRef} />
+            </div>
+            <div style={{display: "flex", flexDirection: "row"}}>
+              <ToggleButtonGroup type="radio" name="options" defaultValue={1} style={{marginRight: 10}}>
+                <ToggleButton className="shadow-none" id="tbg-radio-1" value={1} onClick={() => updateMode(true)}>Linear</ToggleButton>
+                <ToggleButton className="shadow-none" id="tbg-radio-2" value={2} onClick={() => updateMode(false)}>Periodic</ToggleButton>
+              </ToggleButtonGroup>
+              <Button variant="secondary" onClick={onClearClick} style={{marginRight: 10}}>Clear</Button>
+              <Button variant="primary" onClick={onPostClick}>Generate playlist</Button>
+            </div>
           </div>
-          <div style={{display: "flex", flexDirection: "row"}}>
-            <ToggleButtonGroup type="radio" name="options" defaultValue={1} style={{marginRight: 10}}>
-              <ToggleButton className="shadow-none" id="tbg-radio-1" value={1} onClick={() => updateMode(true)}>Linear</ToggleButton>
-              <ToggleButton className="shadow-none" id="tbg-radio-2" value={2} onClick={() => updateMode(false)}>Periodic</ToggleButton>
-            </ToggleButtonGroup>
-            <Button variant="secondary" onClick={onClearClick} style={{marginRight: 10}}>Clear</Button>
-            <Button variant="primary" onClick={onPostClick}>Generate playlist</Button>
+          {results.length > 1 && 
+            <ListPanel playlist={results}/>}
           </div>
           
       </header>
